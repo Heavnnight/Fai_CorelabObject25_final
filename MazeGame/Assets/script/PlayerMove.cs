@@ -1,25 +1,22 @@
 using UnityEngine;
 
-public class PlayerMove : MonoBehaviour
+public class PlayerFollowMouse : MonoBehaviour
 {
-    public float moveSpeed = 4f;
-    Rigidbody2D rb;
-    Vector2 input;
-
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-    }
+    public float depth = 10f;         // المسا﻿فة بين الكاميرا واللاعب
+    public float smoothSpeed = 10f;   // سرعة السموث
 
     void Update()
     {
-        input.x = Input.GetAxisRaw("Horizontal");
-        input.y = Input.GetAxisRaw("Vertical");
-        input = input.normalized;
-    }
+        // ناخذ موقع الماوس
+        Vector3 mousePos = Input.mousePosition;
 
-    void FixedUpdate()
-    {
-        rb.MovePosition(rb.position + input * moveSpeed * Time.fixedDeltaTime);
+        // نحدّد موقع اللاعب حسب عمق الكاميرا
+        mousePos.z = depth;
+
+        // نحول الماوس من شاشة → عالم
+        Vector3 targetPos = Camera.main.ScreenToWorldPoint(mousePos);
+
+        // حركة ناعمة
+        transform.position = Vector3.Lerp(transform.position, targetPos, smoothSpeed * Time.deltaTime);
     }
 }
